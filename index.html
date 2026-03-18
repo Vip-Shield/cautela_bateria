@@ -5,11 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RUMB - Torre Externa - Cautela de Bateria</title>
     <style>
-        /* --- ESTILO VISUAL (Padrão PMERJ com Fundo Marca D'água) --- */
+        /* --- ESTILO VISUAL --- */
         :root {
             --primary-blue: #0d1b2a;
             --secondary-blue: #1b263b;
             --accent-gold: #b8860b;
+            --return-blue: #4dabf7;
             --text-light: #e0e1dd;
             --success-green: #2e7d32;
             --whatsapp-color: #25D366;
@@ -27,13 +28,10 @@
             color: var(--text-light);
             overflow-x: hidden;
             position: relative;
-            
-            /* Fundo gradiente puxado do dashboard */
             background: linear-gradient(135deg, #001a36 0%, #002D5E 100%);
             background-attachment: fixed;
         }
 
-        /* Fundo com a logo (Opacidade baixa e centralizada) */
         body::before {
             content: "";
             position: fixed;
@@ -75,30 +73,14 @@
             position: absolute;
             left: 20px;
             height: 55px;
-            opacity: 0.85; /* Deixa discreto */
+            opacity: 0.85;
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
         }
 
-        .header-text {
-            text-align: center;
-        }
+        .header-text { text-align: center; }
+        .header h1 { margin: 0; font-size: 22px; text-transform: uppercase; color: var(--accent-gold); letter-spacing: 1px; }
+        .header p { margin: 5px 0 0; font-size: 14px; opacity: 0.9; color: white; }
 
-        .header h1 {
-            margin: 0;
-            font-size: 22px;
-            text-transform: uppercase;
-            color: var(--accent-gold);
-            letter-spacing: 1px;
-        }
-
-        .header p {
-            margin: 5px 0 0;
-            font-size: 14px;
-            opacity: 0.9;
-            color: white;
-        }
-
-        /* --- Cartão Central --- */
         .main-card {
             background-color: rgba(27, 38, 59, 0.85);
             backdrop-filter: blur(5px);
@@ -113,17 +95,46 @@
             position: relative;
         }
 
-        .form-group {
+        /* --- BOTÕES DE ALTERNÂNCIA (RETIRADA / DEVOLUÇÃO) --- */
+        .action-toggle {
+            display: flex;
+            border-radius: 8px;
+            overflow: hidden;
             margin-bottom: 25px;
-            text-align: center;
+            border: 1px solid #444;
         }
+
+        .toggle-btn {
+            flex: 1;
+            padding: 15px;
+            background: #222;
+            color: #888;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+
+        .toggle-btn.active-retirada {
+            background: var(--accent-gold);
+            color: #000;
+        }
+
+        .toggle-btn.active-devolucao {
+            background: var(--return-blue);
+            color: #000;
+        }
+
+        .form-group { margin-bottom: 25px; text-align: center; }
 
         label {
             display: block;
             margin-bottom: 10px;
             font-size: 14px;
             font-weight: bold;
-            color: var(--accent-gold);
+            color: white;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
@@ -142,11 +153,7 @@
             letter-spacing: 3px;
         }
 
-        input[type="number"]:focus {
-            border-color: var(--accent-gold);
-            outline: none;
-            box-shadow: 0 0 12px rgba(184, 134, 11, 0.7);
-        }
+        input[type="number"]:focus { border-color: var(--accent-gold); outline: none; box-shadow: 0 0 12px rgba(184, 134, 11, 0.7); }
 
         .btn-buscar {
             width: 100%;
@@ -162,25 +169,12 @@
             transition: 0.2s;
             text-transform: uppercase;
         }
+        .btn-buscar:hover { background-color: #555; }
 
-        .btn-buscar:hover {
-            background-color: #555;
-            border-color: var(--accent-gold);
-        }
+        /* --- Card de Informações --- */
+        #officerInfo { display: none; margin-top: 25px; padding-top: 25px; border-top: 2px solid #444; animation: fadeIn 0.5s ease; }
 
-        /* --- Card de Informações do Policial --- */
-        #officerInfo {
-            display: none;
-            margin-top: 25px;
-            padding-top: 25px;
-            border-top: 2px solid #444;
-            animation: fadeIn 0.5s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-15px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-15px); } to { opacity: 1; transform: translateY(0); } }
 
         .aviso-material {
             background: rgba(184, 134, 11, 0.15);
@@ -193,6 +187,7 @@
             font-weight: bold;
             margin-bottom: 25px;
             text-transform: uppercase;
+            transition: 0.3s;
         }
 
         .info-box {
@@ -202,49 +197,14 @@
             border-radius: 6px;
             margin-bottom: 25px;
             text-align: center;
+            transition: 0.3s;
         }
 
-        .info-nome {
-            font-size: 22px;
-            font-weight: bold;
-            color: white;
-            margin: 0 0 10px 0;
-            text-transform: uppercase;
-        }
-
-        .info-detalhe {
-            font-size: 14px;
-            color: #bbb;
-            margin: 5px 0;
-        }
-        
-        .info-hora {
-            font-size: 18px;
-            color: var(--accent-gold);
-            font-weight: bold;
-            margin-top: 12px;
-            display: block;
-        }
-
-        .info-zap-destino {
-            font-size: 13px;
-            color: white;
-            margin-top: 15px;
-            display: block;
-            border-top: 1px solid #333;
-            padding-top: 10px;
-        }
-
-        .badge-status {
-            display: inline-block;
-            margin-top: 15px;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
-            color: white;
-            text-transform: uppercase;
-        }
+        .info-nome { font-size: 22px; font-weight: bold; color: white; margin: 0 0 10px 0; text-transform: uppercase; }
+        .info-detalhe { font-size: 14px; color: #bbb; margin: 5px 0; }
+        .info-hora { font-size: 18px; font-weight: bold; margin-top: 12px; display: block; color: var(--accent-gold); }
+        .info-zap-destino { font-size: 13px; color: white; margin-top: 15px; display: block; border-top: 1px solid #333; padding-top: 10px; }
+        .badge-status { display: inline-block; margin-top: 15px; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; color: white; text-transform: uppercase; }
 
         .btn-grande {
             width: 100%;
@@ -264,36 +224,17 @@
             gap: 12px;
             text-transform: uppercase;
         }
+        .btn-grande:active { box-shadow: 0 0px #1a9c4b; transform: translateY(5px); }
 
-        .btn-grande:active {
-            box-shadow: 0 0px #1a9c4b;
-            transform: translateY(5px);
-        }
-
-        .btn-cancelar {
-            width: 100%;
-            padding: 14px;
-            background: transparent;
-            border: 1px solid #666;
-            color: #999;
-            border-radius: 6px;
-            margin-top: 20px;
-            cursor: pointer;
-            text-transform: uppercase;
-            font-size: 14px;
-        }
-        
-        .btn-cancelar:hover {
-            color: white;
-            border-color: #999;
-        }
+        .btn-cancelar { width: 100%; padding: 14px; background: transparent; border: 1px solid #666; color: #999; border-radius: 6px; margin-top: 20px; cursor: pointer; text-transform: uppercase; font-size: 14px; }
+        .btn-cancelar:hover { color: white; border-color: #999; }
     </style>
 </head>
 <body>
 
     <div class="header">
         <div class="header-content">
-            <img src="logo_pmerj.png" alt="Logo PMERJ" class="header-logo">
+            <img src="logo_pmerj.png" alt="Logo PMERJ" class="header-logo" onerror="this.style.display='none'">
             <div class="header-text">
                 <h1>RUMB - Torre Externa</h1>
                 <p>CAUTELA EXPRESSA DE BATERIA</p>
@@ -302,38 +243,44 @@
     </div>
 
     <div class="main-card">
-        <div class="form-group" id="searchSection">
-            <label for="rgInput">DIGITE SEU RG PARA CONFIRMAR RETIRADA</label>
-            <input type="number" id="rgInput" placeholder="Ex: 101823" autocomplete="off" inputmode="numeric">
-            <button class="btn-buscar" onclick="buscarPolicial()">IDENTIFICAR</button>
+        
+        <div id="searchSection">
+            <div class="action-toggle">
+                <button id="btnToggleRetirada" class="toggle-btn active-retirada" onclick="mudarAcao('RETIRADA')">Pegar Bateria</button>
+                <button id="btnToggleDevolucao" class="toggle-btn" onclick="mudarAcao('DEVOLUÇÃO')">Devolver Bateria</button>
+            </div>
+
+            <div class="form-group">
+                <label id="lblInstrucao" style="color: var(--accent-gold);">DIGITE SEU RG PARA CONFIRMAR RETIRADA</label>
+                <input type="number" id="rgInput" placeholder="Ex: 101823" autocomplete="off" inputmode="numeric">
+                <button class="btn-buscar" onclick="buscarPolicial()">IDENTIFICAR</button>
+            </div>
         </div>
 
         <div id="officerInfo">
-            <div class="aviso-material">
+            <div class="aviso-material" id="avisoAcao">
                 🔋 01 BATERIA RETIRADA
             </div>
 
-            <div class="info-box">
+            <div class="info-box" id="caixaInfo">
                 <p class="info-nome" id="lblNome">---</p>
                 <p class="info-detalhe" id="lblLocal">LOTAÇÃO: ---</p>
                 <span id="lblHora" class="info-hora">🕒 00/00/0000 00:00:00</span>
-                <span id="lblZapDestino" class="info-zap-destino">Mensagem enviada para confirmação da RUMB...</span>
+                <span id="lblZapDestino" class="info-zap-destino">Mensagem enviada para confirmação...</span>
                 <span id="lblStatus" class="badge-status">---</span>
             </div>
 
             <button class="btn-grande" onclick="confirmarEEnviar()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 16 16">
-                    <path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c-.003 1.396.366 2.76 1.062 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/>
-                </svg>
-                    CONFIRMAR COM A RUMB (ZAP)
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 16 16"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c-.003 1.396.366 2.76 1.062 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/></svg>
+                ENVIAR CONFIRMAÇÃO (ZAP)
             </button>
             
-            <button class="btn-cancelar" onclick="limparTela()">Cancelar</button>
+            <button class="btn-cancelar" onclick="limparTela()">Cancelar / Voltar</button>
         </div>
     </div>
 
     <script>
-        // === BANCO DE DADOS DE POLICIAIS (Simplificado para Exemplo) ===
+        // === BANCO DE DADOS ===
         const db = {
             dan: { gh: "3° SGT", rg: "97196", nome: "DAN", local: "RUMB", whatsapp: "5521964827877" },
             triumpho: { gh: "SD", rg: "109908", nome: "TRIUMPHO", local: "RUMB", whatsapp: "5521964844022" },
@@ -343,129 +290,45 @@
             
             podePegar1: { gh: "CAP", rg: "87913", nome: "Cerqueira", local: "COMANDANTE CAP", whatsapp: "5521970388663" },
             podePegar2: { gh: "CAP", rg: "104560", nome: "Lobato", local: "SUBCOMANDANTE", whatsapp: "5521981620293" },
-
             podePegar3: { gh: "CB", rg: "101823", nome: "S. LEMOS", local: "GPP I - PAVÃO", whatsapp: "21969408254" },
-            podePegar4: { gh: "SD", rg: "110297", nome: "L. BARBOSA", local: "GPP I - PAVÃO", whatsapp: "21991869919" },
-            podePegar5: { gh: "CB", rg: "106260", nome: "BAPTISTA", local: "GPP I - PAVÃO", whatsapp: "21987347572" },
-            podePegar6: { gh: "3° SGT", rg: "91071", nome: "DIAS", local: "GPP I - PAVÃO", whatsapp: "21970085762" },
-            podePegar7: { gh: "CB", rg: "108786", nome: "TORRES", local: "GTPP I - PAVÃO", whatsapp: "21982572969" },
-            podePegar8: { gh: "CB", rg: "107510", nome: "DA SILVA", local: "SOP", whatsapp: "21973797765" },
-            podePegar9: { gh: "SD", rg: "110796", nome: "ERICA", local: "SOP", whatsapp: "21976699905" },
-            podePegar10: { gh: "2° SGT", rg: "83708", nome: "A. MENDES", local: "SOP", whatsapp: "21970777378" },
-            podePegar11: { gh: "3° SGT", rg: "98607", nome: "SOUZA", local: "CURSO BEPE-SEI 119739909", whatsapp: "21987222220" },
-            podePega12: { gh: "CB", rg: "102704", nome: "J. ANDRÉ", local: "GPP III - CANTAGALO", whatsapp: "21973708392" },
-            podePegar13: { gh: "CB", rg: "106351", nome: "M. ARAUJO", local: "GPP III - CANTAGALO", whatsapp: "21982766602" },
-            podePegar14: { gh: "3° SGT", rg: "93752", nome: "CARDOSO", local: "GPP III - CANTAGALO", whatsapp: "21960173981" },
-            podePegar15: { gh: "CB", rg: "103727", nome: "BIZONI", local: "GPP II - PAVÃOZINHO", whatsapp: "21967098524" },
-            podePegar16: { gh: "3° SGT", rg: "100228", nome: "MIRANDA", local: "GPP V", whatsapp: "21970129054" },
-            podePegar17: { gh: "3° SGT", rg: "99791", nome: "ALMEIDA", local: "GPP V", whatsapp: "21964023724" },
-            podePegar18: { gh: "CB", rg: "105284", "nome": "LEONARDO", "local": "AUX DESPACHANTE", whatsapp: "24993289247" },
-            podePegar19: { gh: "CB", rg: "109067", nome: "CAMILO", local: "GTPP I - PAVÃO", whatsapp: "24988150463" },
-            podePegar20: { gh: "CB", rg: "106467", nome: "L. SILVA", local: "GTPP I - PAVÃO", whatsapp: "24992337100" },
-            podePegar21: { gh: "SD", rg: "109738", nome: "MARIANO", local: "GTPP I - PAVÃO", whatsapp: "21976083720" },
-            podePegar22: { gh: "CB", rg: "105248", nome: "DE SOUZA", local: "GTPP II - CANTAGALO", whatsapp: "21987958625" },
-            podePegar23: { gh: "3 SGT", rg: "93168", nome: "F. ABREU", local: "GTPP II - CANTAGALO", whatsapp: "21981867018" },
-            podePegar24: { gh: "CB", rg: "105377", nome: "F. RIBEIRO", local: "GTPP II - CANTAGALO", whatsapp: "22974025744" },
-            podePegar25: { gh: "SD", rg: "108664", nome: "SOUSA SILVA", local: "GTPP II - CANTAGALO", whatsapp: "21970189816" },
-            podePegar26: { gh: "CB", rg: "105374", nome: "LAIA", local: "GTPP II - CANTAGALO", whatsapp: "21979497566" },
-            podePegar27: { gh: "3° SGT", rg: "92490", nome: "VALIM", local: "GTPP III - COPACABANA", whatsapp: "24974011575" },
-            podePegar28: { gh: "CB", rg: "106650", nome: "MATHEUS", local: "GTPP III - COPACABANA", whatsapp: "24999288510" },
-            podePegar29: { gh: "CB", rg: "105341", nome: "AZEVEDO", local: "PRESO", whatsapp: "21987051213" },
-            podePegar30: { gh: "3° SGT", rg: "99226", nome: "M. JUNIOR", local: "GPP I - PAVÃO", whatsapp: "21969757501" },
-            podePegar31: { gh: "3° SGT", rg: "96541", nome: "SILVEIRA", local: "GPP I - PAVÃO", whatsapp: "21964175093" },
-            podePegar32: { gh: "3° SGT", rg: "91049", nome: "JHONATHAN", local: "AUX DESPACHANTE", whatsapp: "21964779101" },
-            podePegar33: { gh: "3° SGT", rg: "99164", nome: "R. MACHADO", "local": "GTPP III - COPACABANA", whatsapp: "21964402142" },
-            podePegar34: { gh: "3° SGT", rg: "91783", nome: "CHARLES", local: "GTPP III - COPACABANA", whatsapp: "21964908661" },
-            podePegar35: { gh: "CB", rg: "106348", nome: "SOARES", local: "GTPP III - COPACABANA", whatsapp: "22998067454" },
-            podePegar36: { gh: "3° SGT", rg: "92732", nome: "MARCIO ESTEVÃO", local: "GTPP III - COPACABANA", whatsapp: "21964575898" },
-            podePegar37: { gh: "3° SGT", rg: "99488", nome: "DE PAULA", local: "GTPP I - PAVÃO", whatsapp: "24998426337" },
-            podePegar38: { gh: "3° SGT", rg: "91665", nome: "R. ALCANTARA", local: "GTPP I - PAVÃO", whatsapp: "21965040543" },
-            podePegar39: { gh: "3° SGT", rg: "100032", nome: "R. LACERDA", local: "GTPP I - PAVÃO", whatsapp: "21970297523" },
-            podePegar40: { gh: "1° SGT", rg: "77614", nome: "ALZIR", local: "SUPERVISÃO", whatsapp: "21972711724" },
-            podePegar41: { gh: "SUBTEN", rg: "66381", nome: "J. MARCELO", local: "SUPERVISÃO", whatsapp: "21964518575" },
-            podePegar42: { gh: "3° SGT", rg: "94010", nome: "R. SIMÕES", local: "RUMB", whatsapp: "21982539175" },
-            podePegar43: { gh: "3° SGT", rg: "97196", nome: "DAN", local: "RUMB", whatsapp: "21964827877" },
-            podePegar44: { gh: "CB", rg: "106561", nome: "MARCOS", local: "GPP II - PAVÃOZINHO", whatsapp: "21999954971" },
-            podePegar45: { gh: "3° SGT", rg: "99242", nome: "ADRIEL", local: "GPP II - PAVÃOZINHO", whatsapp: "21974085368" },
-            podePegar46: { gh: "CB", rg: "105249", nome: "R. FILHO", local: "GPP II - PAVÃOZINHO", whatsapp: "21970072545" },
-            podePegar47: { gh: "CB", rg: "102712", nome: "JOAQUIM", local: "GPP II - PAVÃOZINHO", whatsapp: "21964721739" },
-            podePegar48: { gh: "3° SGT", rg: "100360", nome: "ULISSES", local: "GTPP II - CANTAGALO", whatsapp: "21987387179" },
-            podePegar49: { gh: "CB", rg: "105375", nome: "RANGEL", local: "GTPP II - CANTAGALO", whatsapp: "21990454574" },
-            podePegar50: { gh: "CB", rg: "104282", nome: "SILVA", local: "GTPP II - CANTAGALO", whatsapp: "" },
-            podePegar51: { gh: "CB", rg: "102181", nome: "JUNIOR", local: "GTPP III - COPACABANA", v: "21965845525" },
-            podePegar52: { gh: "CB", rg: "106533", nome: "CORTEZ", local: "GTPP III - COPACABANA", whatsapp: "21997773565" },
-            podePegar53: { gh: "3° SGT", rg: "98121", nome: "JOHNATHAN", local: "GTPP III - COPACABANA", whatsapp: "21964675646" },
-            podePegar54: { gh: "3° SGT", rg: "96990", nome: "CLEISON", local: "GTPP III - COPACABANA", whatsapp: "24998599248" },
-            podePegar55: { gh: "CB", rg: "104197", nome: "DA SILVA", local: "GPP III - CANTAGALO", whatsapp: "21979454227" },
-            podePegar56: { gh: "3° SGT", rg: "98408", nome: "NASCIMENTO", local: "GPP III - CANTAGALO", whatsapp: "21975524819" },
-            podePegar57: { gh: "2° SGT", rg: "85458", nome: "SANTOS", local: "MOT. DA SUPERVISÃO", whatsapp: "21969555411" },
-            podePegar58: { gh: "CB", rg: "107561", nome: "COUTINHO", local: "GPP I - PAVÃO", whatsapp: "21975708723" },
-            podePegar59: { gh: "CB", rg: "108292", nome: "JULIANO", local: "GPP IV", whatsapp: "21983673231" },
-            podePegar60: { gh: "SD", rg: "110387", nome: "JOSUÉ", local: "GPP IV", whatsapp: "22998867687" },
-            podePegar61: { gh: "CB", rg: "108824", nome: "CARMO", local: "GTPP I - PAVÃO", whatsapp: "21996901647" },
-            podePegar62: { gh: "CB", rg: "107805", nome: "M. PAULO", local: "GTPP I - PAVÃO", whatsapp: "21976058456" },
-            podePegar63: { gh: "3° SGT", rg: "98339", nome: "SOUZA", local: "GTPP I - PAVÃO", whatsapp: "21996380102" },
-            podePegar64: { gh: "3° SGT", rg: "95629", nome: "FULLY", local: "GTPP III - COPACABANA", whatsapp: "21972738628" },
-            podePegar65: { gh: "CB", rg: "104953", nome: "PINHEIRO", local: "GTPP III - COPACABANA", whatsapp: "21993471036" },
-            podePegar66: { gh: "CB", rg: "103051", nome: "TIRADENTES", local: "GTPP III - COPACABANA", whatsapp: "22997162034" },
-            podePegar67: { gh: "CB", "rg": "104291", nome: "FELIX", local: "GTPP III - COPACABANA", whatsapp: "21964649977" },
-            podePegar68: { gh: "2° SGT", rg: "86615", nome: "ISAIAS", local: "SUPERVISÃO", whatsapp: "21966095717" },
-            podePegar69: { gh: "3° SGT", rg: "93331", nome: "FERREIRA", local: "SOP", whatsapp: "21964317876" },
-            podePegar70: { gh: "3° SGT", rg: "98596", nome: "VIDAL", local: "GTPP II - CANTAGALO", whatsapp: "21995201781" },
-            podePegar71: { gh: "CB", rg: "108190", nome: "UERBERT", local: "GTPP II - CANTAGALO", whatsapp: "24998521847" },
-            podePegar72: { gh: "CB", rg: "102190", nome: "D. SILVA", local: "GTPP II - CANTAGALO", whatsapp: "32988415933" },
-            podePegar73: { gh: "SD", rg: "110594", nome: "JULIANA FERREIRA", local: "MANUTENÇÃO", whatsapp: "21970082257" },
-            podePegar74: { gh: "SUBTEN", rg: "65727", nome: "SANTΑΝΑ", local: "MANUTENÇÃO", whatsapp: "21964523812" },
-            podePegar75: { gh: "3° SGT", rg: "98939", nome: "ANAVANTE", local: "MANUTENÇÃO", whatsapp: "" },
-            podePegar76: { gh: "CB", rg: "109414", nome: "BIANCHI", local: "GPP V", whatsapp: "21988766548" },
-            podePegar77: { gh: "SD", rg: "109754", nome: "CAMELO", local: "GPP V", whatsapp: "21975556121" },
-            podePegar78: { gh: "SD", rg: "110470", nome: "TELES", local: "GPP I - PAVÃO", whatsapp: "21977287457" },
-            podePegar79: { gh: "CB", rg: "108677", nome: "ÉDVAN", local: "GPP III - CANTAGALO", whatsapp: "21974753248" },
-            podePegar80: { gh: "2° SGT", rg: "86367", nome: "REGALDINO", local: "GPP II - PAVÃOZINHO", whatsapp: "21972332353" },
-            podePegar81: { gh: "2° SGT", rg: "85426", nome: "BRITO", local: "GPP II - PAVÃOZINHO", whatsapp: "21982813420" },
-            podePegar82: { gh: "3° SGT", rg: "93606", nome: "A. ALCANTARA", local: "GPP II - PAVÃOZINHO", whatsapp: "21964244240" },
-            podePegar83: { gh: "CB", rg: "109510", nome: "MAGANO", local: "GPP I - PAVÃO", whatsapp: "21959330250" },
-            podePegar84: { gh: "SUBTEN", rg: "70372", nome: "MENDES", local: "SUPERVISÃO", whatsapp: "21972505349" },
-            podePegar85: { gh: "SD", rg: "110433", nome: "D. SANTOS", local: "GPP IV", whatsapp: "21964415133" },
-            podePegar86: { gh: "3° SGT", rg: "95714", nome: "MALAQUIAS", local: "GPP IV", whatsapp: "21969776346" },
-            podePegar87: { gh: "SUBTEN", rg: "76452", nome: "WAGNER", local: "SOP", whatsapp: "21999910259" },
-            podePegar88: { gh: "3° SGT", rg: "93081", nome: "GUEDES", local: "SOP", whatsapp: "21965734932" },
-            podePegar89: { gh: "3° SGT", rg: "92119", nome: "CAIO", local: "MOT. DA SUPERVISÃO", whatsapp: "21964169731" },
-            podePegar90: { gh: "3° SGT", rg: "100000", nome: "ALACRINO", local: "RUMB", whatsapp: "21965769875" },
-            podePegar91: { gh: "CB", rg: "105391", nome: "HENRIQUE", local: "GTPP I - PAVÃO", whatsapp: "21966613922" },
-            podePegar92: { gh: "CB", rg: "106037", nome: "CAIQUE", local: "GTPP I - PAVÃO", whatsapp: "21975473746" },
-            podePegar93: { gh: "3° SGT", rg: "98202", nome: "CRISTIANO", local: "GTPP I - PAVÃO", whatsapp: "24992449094" },
-            podePegar94: { gh: "CB", rg: "101752", nome: "TRINDADE", local: "GPP III - CANTAGALO", whatsapp: "21987761646" },
-            podePegar95: { gh: "3° SGT", rg: "91115", nome: "ITALO", local: "GPP III - CANTAGALO", whatsapp: "21977049221" },
-            podePegar96: { gh: "3° SGT", rg: "96003", nome: "JONATHA", local: "GTPP I - PAVÃO", whatsapp: "22999257764" },
-            podePegar97: { gh: "2° SGT", rg: "85995", nome: "VINICIUS", local: "SUPERVISÃO", whatsapp: "21987631169" },
-            podePegar98: { gh: "SD", rg: "109908", nome: "TRIUMPHO", local: "RUMB", v: "21964844022" },
-            podePegar99: { gh: "3° SGT", rg: "91131", nome: "CONDE", local: "SOP", whatsapp: "21986584062" },
-            podePegar100: { gh: "3° SGT", rg: "92258", nome: "DOMINGOS", local: "GPP II - PAVÃOZINHO", whatsapp: "21980665400" },
-            podePegar101: { gh: "3° SGT", rg: "95837", nome: "LACERDA", local: "RUMB", whatsapp: "" },
-            podePegar102: { gh: "2 SGT", rg: "85664", nome: "DENILSON", local: "GTPP III - COPACABANA", whatsapp: "21969275748" },
-            podePegar103: { gh: "1° SGT", rg: "73888", nome: "COIMBRA", local: "A DISP CPP-SEI N 110944529", whatsapp: "21964106784" },
-            podePegar104: { gh: "CB", rg: "107520", nome: "T. RODRIGUES", local: "GPP I - PAVÃO", whatsapp: "21984798140" },
-            podePegar105: { gh: "3° SGT", rg: "93998", nome: "F. PERES", local: "GPP II - PAVÃOZINHO", whatsapp: "21964544296" }
+            podePegar4: { gh: "SD", rg: "110297", nome: "L. BARBOSA", local: "GPP I - PAVÃO", whatsapp: "21991869919" }
+            // (MANTENHA AQUI O RESTANTE DO SEU BANCO DE DADOS DE POLICIAIS IGUAL AO ARQUIVO ANTERIOR)
         };
 
-        // === SEQUÊNCIA DA ESCALA RUMB (Ciclo de 10 turnos de 12 horas) ===
         const sequenciaEscala = [
-            db.dan,      // 0: 26/01 05h
-            db.triumpho, // 1: 26/01 17h
-            db.simoes,   // 2: 27/01 05h
-            db.dan,      // 3: 27/01 17h
-            db.lacerda,  // 4: 28/01 05h
-            db.simoes,   // 5: 28/01 17h
-            db.alacrino, // 6: 29/01 05h
-            db.lacerda,  // 7: 29/01 17h
-            db.triumpho, // 8: 30/01 05h
-            db.alacrino  // 9: 30/01 17h
+            db.dan, db.triumpho, db.simoes, db.dan, db.lacerda, 
+            db.simoes, db.alacrino, db.lacerda, db.triumpho, db.alacrino 
         ];
 
+        // VARIÁVEIS DE CONTROLE
+        let acaoSelecionada = "RETIRADA"; 
         let policialRetirando = null;
         let policialServicoRUMB = null;
         let dataHoraRegistro = "";
+
+        // FUNÇÃO DE ALTERNAR AÇÃO (RETIRADA / DEVOLUÇÃO)
+        function mudarAcao(acao) {
+            acaoSelecionada = acao;
+            
+            const btnRet = document.getElementById('btnToggleRetirada');
+            const btnDev = document.getElementById('btnToggleDevolucao');
+            const lblInstrucao = document.getElementById('lblInstrucao');
+            const inputRg = document.getElementById('rgInput');
+
+            if(acao === 'RETIRADA') {
+                btnRet.classList.add('active-retirada');
+                btnDev.classList.remove('active-devolucao');
+                lblInstrucao.textContent = "DIGITE SEU RG PARA CONFIRMAR RETIRADA";
+                lblInstrucao.style.color = "var(--accent-gold)";
+                inputRg.focus();
+            } else {
+                btnDev.classList.add('active-devolucao');
+                btnRet.classList.remove('active-retirada');
+                lblInstrucao.textContent = "DIGITE SEU RG PARA CONFIRMAR DEVOLUÇÃO";
+                lblInstrucao.style.color = "var(--return-blue)";
+                inputRg.focus();
+            }
+        }
 
         function getPolicialServicoRUMB(targetDate = new Date()) {
             const referenceDate = new Date('2026-01-26T05:00:00'); 
@@ -475,40 +338,31 @@
             if (hour >= 5 && hour < 17) {
                 now.setHours(5, 0, 0, 0);
             } else {
-                if (hour < 5) {
-                    now.setDate(now.getDate() - 1);
-                }
+                if (hour < 5) now.setDate(now.getDate() - 1);
                 now.setHours(17, 0, 0, 0);
             }
             
             const diffTime = now - referenceDate;
             if (diffTime < 0) return null;
             
-            const turnsSinceStart = Math.floor(diffTime / (1000 * 60 * 60 * 12));
-            const currentTurnIndex = turnsSinceStart % 10;
-            
+            const currentTurnIndex = Math.floor(diffTime / (1000 * 60 * 60 * 12)) % 10;
             return sequenciaEscala[currentTurnIndex];
         }
 
         document.getElementById('rgInput').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                buscarPolicial();
-            }
+            if (e.key === 'Enter') buscarPolicial();
         });
 
         function buscarPolicial() {
             const rgBusca = document.getElementById('rgInput').value.trim();
-            
-            if(!rgBusca) {
-                alert("Por favor, digite seu RG.");
-                return;
-            }
+            if(!rgBusca) { alert("Por favor, digite seu RG."); return; }
 
             policialRetirando = Object.values(db).find(p => p.rg === rgBusca);
 
             if (policialRetirando) {
                 document.getElementById('searchSection').style.display = 'none';
 
+                // Prepara as informações visuais na tela
                 document.getElementById('lblNome').textContent = `${policialRetirando.gh} ${policialRetirando.nome}`;
                 document.getElementById('lblLocal').textContent = `LOTAÇÃO: ${policialRetirando.local}`;
                 
@@ -516,8 +370,28 @@
                 dataHoraRegistro = agora.toLocaleString('pt-BR');
                 document.getElementById('lblHora').textContent = `🕒 ${dataHoraRegistro}`;
                 
+                // AJUSTA O VISUAL CONFORME A AÇÃO (CORES E TEXTOS)
+                const avisoAcao = document.getElementById('avisoAcao');
+                const caixaInfo = document.getElementById('caixaInfo');
+                const infoHora = document.getElementById('lblHora');
+
+                if (acaoSelecionada === 'RETIRADA') {
+                    avisoAcao.innerHTML = "🔋 01 BATERIA RETIRADA";
+                    avisoAcao.style.color = "var(--accent-gold)";
+                    avisoAcao.style.borderColor = "var(--accent-gold)";
+                    avisoAcao.style.background = "rgba(184, 134, 11, 0.15)";
+                    caixaInfo.style.borderLeftColor = "var(--accent-gold)";
+                    infoHora.style.color = "var(--accent-gold)";
+                } else {
+                    avisoAcao.innerHTML = "🔄 01 BATERIA DEVOLVIDA";
+                    avisoAcao.style.color = "var(--return-blue)";
+                    avisoAcao.style.borderColor = "var(--return-blue)";
+                    avisoAcao.style.background = "rgba(77, 171, 247, 0.15)";
+                    caixaInfo.style.borderLeftColor = "var(--return-blue)";
+                    infoHora.style.color = "var(--return-blue)";
+                }
+
                 policialServicoRUMB = getPolicialServicoRUMB(agora);
-                
                 const zapDestinoLabel = document.getElementById('lblZapDestino');
                 const badge = document.getElementById('lblStatus');
 
@@ -525,12 +399,12 @@
                     zapDestinoLabel.innerHTML = `⚠️ Confirmação para: *${policialServicoRUMB.gh} ${policialServicoRUMB.nome}* (RUMB DE SERVIÇO)<br>📞 WhatsApp: ${policialServicoRUMB.whatsapp}`;
                     
                     if (policialRetirando.rg === policialServicoRUMB.rg) {
-                        badge.textContent = "ESCALADO HOJE (RETIRANDO E CONFIRMANDO)";
+                        badge.textContent = "ESCALADO HOJE (SISTEMA RUMB)";
                         badge.style.backgroundColor = "var(--success-green)";
                         badge.style.color = "white";
                     } else {
                         badge.textContent = `ESCALADO HOJE: ${policialServicoRUMB.gh} ${policialServicoRUMB.nome}`;
-                        badge.style.backgroundColor = "var(--accent-gold)";
+                        badge.style.backgroundColor = acaoSelecionada === 'RETIRADA' ? "var(--accent-gold)" : "var(--return-blue)";
                         badge.style.color = "black";
                     }
                 } else {
@@ -552,43 +426,43 @@
                 return;
             }
 
-            // 1. Prepara o pacote de dados (JSON)
+            // 1. DADOS QUE VÃO PARA O GOOGLE SHEETS
             const dadosParaPlanilha = {
                 dataHora: dataHoraRegistro,
                 rg: policialRetirando.rg,
                 nome: `${policialRetirando.gh} ${policialRetirando.nome}`,
                 lotacao: policialRetirando.local,
-                acao: "RETIRADA",
+                acao: acaoSelecionada, // <-- Aqui vai "RETIRADA" ou "DEVOLUÇÃO"
                 rumbServico: `${policialServicoRUMB.gh} ${policialServicoRUMB.nome}`
             };
 
-            // URL do App da Web inserida aqui
             const scriptURL = 'https://script.google.com/macros/s/AKfycbwlm3dCgBvxdY9sMT4h5ZbV4L4QFRI84hSixfFZusiqiZSJw-x7700qaVhm5uxZw9Q/exec';
 
-            // Muda visualmente o botão para mostrar que está carregando
             const btn = document.querySelector('.btn-grande');
             const textoOriginal = btn.innerHTML;
             btn.innerHTML = "⏳ REGISTRANDO NO SISTEMA...";
             btn.disabled = true;
 
-            // 2. Dispara os dados para o Google Sheets
+            // 2. ENVIA PARA A PLANILHA
             fetch(scriptURL, {
                 method: 'POST',
-                mode: 'no-cors', // Evita bloqueios de segurança entre o site e o Google
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(dadosParaPlanilha)
             })
             .then(response => {
-                // 3. Após enviar pra planilha, prepara a mensagem do WhatsApp
-                const textoMensagem = `*RUMB - CAUTELA DE BATERIA (TORRE EXTERNA)*\n\n` +
-                                      `👮‍♂️ *Policial Retirando:* ${policialRetirando.gh} ${policialRetirando.nome}\n` +
+                // 3. ENVIA PARA O WHATSAPP
+                // Emoji diferente dependendo da ação
+                const icone = acaoSelecionada === 'RETIRADA' ? "🔋" : "🔄";
+                
+                const textoMensagem = `*RUMB - TORRE EXTERNA*\n\n` +
+                                      `🚨 *AÇÃO:* ${acaoSelecionada}\n` +
+                                      `👮‍♂️ *Policial:* ${policialRetirando.gh} ${policialRetirando.nome}\n` +
                                       `🆔 *RG:* ${policialRetirando.rg}\n` +
                                       `📍 *Lotação:* ${policialRetirando.local}\n` +
-                                      `🔋 *Material:* 01 Bateria de Câmera Corporal\n` +
+                                      `${icone} *Material:* 01 Bateria de Câmera Corporal\n` +
                                       `🕒 *Registro:* ${dataHoraRegistro}\n\n` +
-                                      `✅ _Registrado no sistema da Reserva._\n` +
+                                      `✅ _Registrado no banco de dados da Reserva._\n` +
                                       `RUMB DE SERVIÇO: ${policialServicoRUMB.gh} ${policialServicoRUMB.nome}`;
 
                 const urlFormatada = `https://wa.me/${policialServicoRUMB.whatsapp}?text=${encodeURIComponent(textoMensagem)}`;
@@ -597,7 +471,6 @@
                 limparTela();
                 btn.innerHTML = textoOriginal;
                 btn.disabled = false;
-                // Como não usamos alertas do navegador que bloqueiam a tela no 'no-cors', o WhatsApp abre e o sistema reseta.
             })
             .catch(error => {
                 console.error('Erro!', error.message);
@@ -614,9 +487,9 @@
             policialRetirando = null;
             policialServicoRUMB = null;
             dataHoraRegistro = "";
-            document.getElementById('rgInput').focus();
+            // Garante que volte para o padrão de tela certa
+            mudarAcao(acaoSelecionada); 
         }
     </script>
-
 </body>
 </html>
