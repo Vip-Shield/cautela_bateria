@@ -11,6 +11,7 @@
             --secondary-blue: #1b263b;
             --accent-gold: #b8860b;
             --return-blue: #4dabf7;
+            --swap-orange: #e67e22; /* Nova cor para a Troca */
             --text-light: #e0e1dd;
             --success-green: #2e7d32;
             --whatsapp-color: #25D366;
@@ -95,7 +96,7 @@
             position: relative;
         }
 
-        /* --- BOTÕES DE ALTERNÂNCIA (RETIRADA / DEVOLUÇÃO) --- */
+        /* --- BOTÕES DE ALTERNÂNCIA --- */
         .action-toggle {
             display: flex;
             border-radius: 8px;
@@ -106,19 +107,24 @@
 
         .toggle-btn {
             flex: 1;
-            padding: 15px;
+            padding: 15px 5px; /* Reduzido o padding lateral para caber os 3 botões melhor */
             background: #222;
             color: #888;
             border: none;
             cursor: pointer;
             font-weight: bold;
             transition: 0.3s;
-            font-size: 14px;
+            font-size: 13px; /* Fonte levemente menor para 3 botões */
             text-transform: uppercase;
         }
 
         .toggle-btn.active-retirada {
             background: var(--accent-gold);
+            color: #000;
+        }
+
+        .toggle-btn.active-troca {
+            background: var(--swap-orange);
             color: #000;
         }
 
@@ -137,6 +143,7 @@
             color: white;
             text-transform: uppercase;
             letter-spacing: 1px;
+            transition: color 0.3s;
         }
 
         input[type="number"] {
@@ -153,7 +160,7 @@
             letter-spacing: 3px;
         }
 
-        input[type="number"]:focus { border-color: var(--accent-gold); outline: none; box-shadow: 0 0 12px rgba(184, 134, 11, 0.7); }
+        input[type="number"]:focus { border-color: #fff; outline: none; box-shadow: 0 0 12px rgba(255, 255, 255, 0.3); }
 
         .btn-buscar {
             width: 100%;
@@ -202,9 +209,9 @@
 
         .info-nome { font-size: 22px; font-weight: bold; color: white; margin: 0 0 10px 0; text-transform: uppercase; }
         .info-detalhe { font-size: 14px; color: #bbb; margin: 5px 0; }
-        .info-hora { font-size: 18px; font-weight: bold; margin-top: 12px; display: block; color: var(--accent-gold); }
+        .info-hora { font-size: 18px; font-weight: bold; margin-top: 12px; display: block; color: var(--accent-gold); transition: 0.3s;}
         .info-zap-destino { font-size: 13px; color: white; margin-top: 15px; display: block; border-top: 1px solid #333; padding-top: 10px; }
-        .badge-status { display: inline-block; margin-top: 15px; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; color: white; text-transform: uppercase; }
+        .badge-status { display: inline-block; margin-top: 15px; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: bold; color: white; text-transform: uppercase; transition: 0.3s;}
 
         .btn-grande {
             width: 100%;
@@ -246,8 +253,9 @@
         
         <div id="searchSection">
             <div class="action-toggle">
-                <button id="btnToggleRetirada" class="toggle-btn active-retirada" onclick="mudarAcao('RETIRADA')">Pegar Bateria</button>
-                <button id="btnToggleDevolucao" class="toggle-btn" onclick="mudarAcao('DEVOLUÇÃO')">Devolver Bateria</button>
+                <button id="btnToggleRetirada" class="toggle-btn active-retirada" onclick="mudarAcao('RETIRADA')">Pegar</button>
+                <button id="btnToggleTroca" class="toggle-btn" onclick="mudarAcao('TROCA')">Trocar</button>
+                <button id="btnToggleDevolucao" class="toggle-btn" onclick="mudarAcao('DEVOLUÇÃO')">Devolver</button>
             </div>
 
             <div class="form-group">
@@ -292,7 +300,7 @@
             podePegar2: { gh: "CAP", rg: "104560", nome: "Lobato", local: "SUBCOMANDANTE", whatsapp: "5521981620293" },
             podePegar3: { gh: "CB", rg: "101823", nome: "S. LEMOS", local: "GPP I - PAVÃO", whatsapp: "21969408254" },
             podePegar4: { gh: "SD", rg: "110297", nome: "L. BARBOSA", local: "GPP I - PAVÃO", whatsapp: "21991869919" }
-            // (MANTENHA AQUI O RESTANTE DO SEU BANCO DE DADOS DE POLICIAIS IGUAL AO ARQUIVO ANTERIOR)
+            // (MANTENHA AQUI O RESTANTE DO SEU BANCO DE DADOS DE POLICIAIS)
         };
 
         const sequenciaEscala = [
@@ -306,28 +314,36 @@
         let policialServicoRUMB = null;
         let dataHoraRegistro = "";
 
-        // FUNÇÃO DE ALTERNAR AÇÃO (RETIRADA / DEVOLUÇÃO)
+        // FUNÇÃO DE ALTERNAR AÇÃO (RETIRADA / TROCA / DEVOLUÇÃO)
         function mudarAcao(acao) {
             acaoSelecionada = acao;
             
             const btnRet = document.getElementById('btnToggleRetirada');
+            const btnTroca = document.getElementById('btnToggleTroca');
             const btnDev = document.getElementById('btnToggleDevolucao');
             const lblInstrucao = document.getElementById('lblInstrucao');
             const inputRg = document.getElementById('rgInput');
 
+            // Limpa as classes de todos
+            btnRet.classList.remove('active-retirada');
+            btnTroca.classList.remove('active-troca');
+            btnDev.classList.remove('active-devolucao');
+
             if(acao === 'RETIRADA') {
                 btnRet.classList.add('active-retirada');
-                btnDev.classList.remove('active-devolucao');
                 lblInstrucao.textContent = "DIGITE SEU RG PARA CONFIRMAR RETIRADA";
                 lblInstrucao.style.color = "var(--accent-gold)";
-                inputRg.focus();
-            } else {
+            } else if (acao === 'TROCA') {
+                btnTroca.classList.add('active-troca');
+                lblInstrucao.textContent = "DIGITE SEU RG PARA CONFIRMAR TROCA";
+                lblInstrucao.style.color = "var(--swap-orange)";
+            } else if (acao === 'DEVOLUÇÃO') {
                 btnDev.classList.add('active-devolucao');
-                btnRet.classList.remove('active-retirada');
                 lblInstrucao.textContent = "DIGITE SEU RG PARA CONFIRMAR DEVOLUÇÃO";
                 lblInstrucao.style.color = "var(--return-blue)";
-                inputRg.focus();
             }
+            
+            inputRg.focus();
         }
 
         function getPolicialServicoRUMB(targetDate = new Date()) {
@@ -382,7 +398,14 @@
                     avisoAcao.style.background = "rgba(184, 134, 11, 0.15)";
                     caixaInfo.style.borderLeftColor = "var(--accent-gold)";
                     infoHora.style.color = "var(--accent-gold)";
-                } else {
+                } else if (acaoSelecionada === 'TROCA') {
+                    avisoAcao.innerHTML = "🪫➔🔋 01 BATERIA TROCADA";
+                    avisoAcao.style.color = "var(--swap-orange)";
+                    avisoAcao.style.borderColor = "var(--swap-orange)";
+                    avisoAcao.style.background = "rgba(230, 126, 34, 0.15)";
+                    caixaInfo.style.borderLeftColor = "var(--swap-orange)";
+                    infoHora.style.color = "var(--swap-orange)";
+                } else if (acaoSelecionada === 'DEVOLUÇÃO') {
                     avisoAcao.innerHTML = "🔄 01 BATERIA DEVOLVIDA";
                     avisoAcao.style.color = "var(--return-blue)";
                     avisoAcao.style.borderColor = "var(--return-blue)";
@@ -404,7 +427,12 @@
                         badge.style.color = "white";
                     } else {
                         badge.textContent = `ESCALADO HOJE: ${policialServicoRUMB.gh} ${policialServicoRUMB.nome}`;
-                        badge.style.backgroundColor = acaoSelecionada === 'RETIRADA' ? "var(--accent-gold)" : "var(--return-blue)";
+                        
+                        // Define a cor da badge do PM de serviço baseada na ação
+                        if (acaoSelecionada === 'RETIRADA') badge.style.backgroundColor = "var(--accent-gold)";
+                        else if (acaoSelecionada === 'TROCA') badge.style.backgroundColor = "var(--swap-orange)";
+                        else badge.style.backgroundColor = "var(--return-blue)";
+                        
                         badge.style.color = "black";
                     }
                 } else {
@@ -432,7 +460,7 @@
                 rg: policialRetirando.rg,
                 nome: `${policialRetirando.gh} ${policialRetirando.nome}`,
                 lotacao: policialRetirando.local,
-                acao: acaoSelecionada, // <-- Aqui vai "RETIRADA" ou "DEVOLUÇÃO"
+                acao: acaoSelecionada, // <-- Aqui vai "RETIRADA", "TROCA" ou "DEVOLUÇÃO"
                 rumbServico: `${policialServicoRUMB.gh} ${policialServicoRUMB.nome}`
             };
 
@@ -453,7 +481,9 @@
             .then(response => {
                 // 3. ENVIA PARA O WHATSAPP
                 // Emoji diferente dependendo da ação
-                const icone = acaoSelecionada === 'RETIRADA' ? "🔋" : "🔄";
+                let icone = "🔋";
+                if (acaoSelecionada === 'TROCA') icone = "🪫➔🔋";
+                if (acaoSelecionada === 'DEVOLUÇÃO') icone = "🔄";
                 
                 const textoMensagem = `*RUMB - TORRE EXTERNA*\n\n` +
                                       `🚨 *AÇÃO:* ${acaoSelecionada}\n` +
